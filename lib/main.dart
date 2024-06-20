@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hass/screens/confirmation_screen.dart';
+import 'package:hass/screens/doctor_selection_screen.dart';
+import 'package:hass/screens/home_screen.dart';
 import 'package:hass/screens/sign_in.dart';
-//import 'package:hass/screens/splash_screen.dart';
+import 'package:hass/screens/splash_screen.dart';
 
 void main() {
-  runApp(const SignIn());
+  runApp( const HomeScreen());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'DocDash',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -33,7 +36,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+     // home: SplashScreen(),
     );
   }
 }
