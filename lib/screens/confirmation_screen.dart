@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hass/confirmed_visits_notifier.dart';
+import 'package:hass/screens/home_screen.dart';
+import 'package:provider/provider.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final String doctorName;
@@ -14,9 +17,9 @@ class ConfirmationScreen extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Confirmation',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontFamily: 'Montserrat',
             ),
@@ -29,17 +32,28 @@ class ConfirmationScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Doctor: $doctorName', style: TextStyle(fontSize: 18)),
-              SizedBox(height: 8),
-              Text('Time Slot: $timeSlot', style: TextStyle(fontSize: 18)),
-              SizedBox(height: 8),
-              Text('Home Visit: ${homeVisit ? "Yes" : "No"}', style: TextStyle(fontSize: 18)),
-              SizedBox(height: 16),
+              Text('Doctor: $doctorName', style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              Text('Time Slot: $timeSlot', style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              Text('Home Visit: ${homeVisit ? "Yes" : "No"}', style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // Perform final booking action
+                  // Add the confirmed visit to the notifier
+                  Provider.of<ConfirmedVisitsNotifier>(context, listen: false)
+                      .addConfirmedVisit(ConfirmedVisit(
+                    doctorName: doctorName,
+                    timeSlot: timeSlot,
+                    homeVisit: homeVisit,
+                  ));
+                  // Navigate back to the home screen
+                  Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  (route) => false,
+                );
                 },
-                child: Text('Confirm'),
+                child: const Text('Confirm'),
               ),
             ],
           ),

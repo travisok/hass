@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hass/screens/confirmation_screen.dart';
-import 'package:hass/screens/doctor_selection_screen.dart';
+import 'package:hass/confirmed_visits_notifier.dart';
 import 'package:hass/screens/home_screen.dart';
 import 'package:hass/screens/sign_in.dart';
 import 'package:hass/screens/splash_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp( const HomeScreen());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ConfirmedVisitsNotifier(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'DocDash',
       theme: ThemeData(
         // This is the theme of your application.
@@ -36,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-     // home: SplashScreen(),
+      home: const HomeScreen(),
     );
   }
 }
