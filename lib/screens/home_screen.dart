@@ -11,17 +11,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final Map<String, List<String>> _hospitalDoctors = {
+    'Hospital 1': ['Doctor 1', 'Doctor 2', 'Doctor 3'],
+    'Hospital 2': ['Doctor 4', 'Doctor 5', 'Doctor 6'],
+    'Hospital 3': ['Doctor 7', 'Doctor 8', 'Doctor 9'],
+  };
   final List<String> _hospitals = ['Hospital 1', 'Hospital 2', 'Hospital 3'];
   List<String> _filteredHospitals = [];
   bool _searchStarted = false;
+  final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _filteredHospitals = _hospitals;
-
-    // Add listener to focus node to detect focus changes
+    _searchController.addListener(_onSearchChanged);
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
         setState(() {
@@ -29,6 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
+  }
+
+  void _onSearchChanged() {
+    _filterHospitals(_searchController.text);
   }
 
   void _filterHospitals(String query) {
@@ -45,6 +54,13 @@ class _HomeScreenState extends State<HomeScreen> {
         _filteredHospitals = filtered;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,15 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               TextField(
+                controller: _searchController,
                 focusNode: _focusNode,
                 decoration: const InputDecoration(
                   hintText: 'Search by name of hospital',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.search),
                 ),
-                onChanged: (text) {
-                  _filterHospitals(text);
-                },
               ),
               if (_searchStarted)
                 Expanded(
@@ -97,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+              const SizedBox(height: 16),
               const Text(
                 'Confirmed Visits',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -125,11 +139,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
   }
 }
