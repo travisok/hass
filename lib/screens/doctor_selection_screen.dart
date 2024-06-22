@@ -13,9 +13,9 @@ class DoctorSelectionScreen extends StatefulWidget {
 
 class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
   final Map<String, List<String>> _hospitalDoctors = {
-    'Hospital 1': ['Doctor 1', 'Doctor 2', 'Doctor 3'],
-    'Hospital 2': ['Doctor 4', 'Doctor 5', 'Doctor 6'],
-    'Hospital 3': ['Doctor 7', 'Doctor 8', 'Doctor 9'],
+    'Edenbrook Hospital, Victoria Island, Lagos': ['Dr Gbenga Ishola', 'Dr Ethan Ramsey', 'Dr Tega Ovunwyi'],
+    'Federal Medical Centre, Onitsha, Anambra': ['Dr Chukwumezie Osita', 'Dr Micah Okoye', 'Dr Abasikpongo Inyang'],
+    'Mass Kenmore Hospital, Zaria, Kano': ['Dr Musa Dikko', 'Dr Alice Balewa', 'Dr Taylor Swift'],
   };
   final Map<String, List<String>> _doctorTimeSlots = {};
   List<String> _doctors = [];
@@ -36,63 +36,63 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
     final DateFormat parseFormat = DateFormat('EEEE, MMM d, yyyy, h:mm a - h:mm a');
 
     final Map<String, List<String>> doctorSlots = {
-      'Doctor 1': [
+      'Dr Gbenga Ishola': [
         '9:00 AM - 10:00 AM',
         '11:00 AM - 12:00 PM',
         '2:00 PM - 3:00 PM',
         '3:00 PM - 4:00 PM',
         '5:00 PM - 6:00 PM',
       ],
-      'Doctor 2': [
+      'Dr Ethan Ramsey': [
         '8:00 AM - 9:00 AM',
         '10:00 AM - 11:00 AM',
         '1:00 PM - 2:00 PM',
         '3:00 PM - 4:00 PM',
         '4:00 PM - 5:00 PM',
       ],
-      'Doctor 3': [
+      'Dr Tega Ovunwyi': [
         '7:00 AM - 8:00 AM',
         '9:00 AM - 10:00 AM',
         '12:00 PM - 1:00 PM',
         '2:00 PM - 3:00 PM',
         '3:00 PM - 4:00 PM',
       ],
-      'Doctor 4': [
+      'Dr Chukwumezie Osita': [
         '10:00 AM - 11:00 AM',
         '11:00 AM - 12:00 PM',
         '1:00 PM - 2:00 PM',
         '3:00 PM - 4:00 PM',
         '4:00 PM - 5:00 PM',
       ],
-      'Doctor 5': [
+      'Dr Micah Okoye': [
         '9:00 AM - 10:00 AM',
         '11:00 AM - 12:00 PM',
         '1:00 PM - 2:00 PM',
         '2:00 PM - 3:00 PM',
         '4:00 PM - 5:00 PM',
       ],
-      'Doctor 6': [
+      'Dr Abasikpongo Inyang': [
         '8:00 AM - 9:00 AM',
         '10:00 AM - 11:00 AM',
         '12:00 PM - 1:00 PM',
         '2:00 PM - 3:00 PM',
         '3:00 PM - 4:00 PM',
       ],
-      'Doctor 7': [
+      'Dr Musa Dikko': [
         '7:00 AM - 8:00 AM',
         '9:00 AM - 10:00 AM',
         '11:00 AM - 12:00 PM',
         '1:00 PM - 2:00 PM',
         '3:00 PM - 4:00 PM',
       ],
-      'Doctor 8': [
+      'Dr Alice Balewa': [
         '8:00 AM - 9:00 AM',
         '10:00 AM - 11:00 AM',
         '12:00 PM - 1:00 PM',
         '2:00 PM - 3:00 PM',
         '4:00 PM - 5:00 PM',
       ],
-      'Doctor 9': [
+      'Dr Taylor Swift': [
         '9:00 AM - 10:00 AM',
         '11:00 AM - 12:00 PM',
         '1:00 PM - 2:00 PM',
@@ -102,15 +102,15 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
     };
 
     final Map<String, List<int>> doctorDays = {
-      'Doctor 1': [2, 4, 6, 7, 2],
-      'Doctor 2': [1, 2, 2, 4, 6],
-      'Doctor 3': [1, 3, 4, 5, 7],
-      'Doctor 4': [1, 3, 4, 6, 7],
-      'Doctor 5': [1, 2, 4, 5, 7],
-      'Doctor 6': [2, 4, 5, 6, 7],
-      'Doctor 7': [1, 2, 3, 5, 7],
-      'Doctor 8': [1, 2, 3, 4, 7],
-      'Doctor 9': [1, 2, 3, 4, 5],
+      'Dr Gbenga Ishola': [2, 4, 6, 7, 2],
+      'Dr Ethan Ramsey': [1, 2, 2, 4, 6],
+      'Dr Tega Ovunwyi': [1, 3, 4, 5, 7],
+      'Dr Chukwumezie Osita': [1, 3, 4, 6, 7],
+      'Dr Micah Okoye': [1, 2, 4, 5, 7],
+      'Dr Abasikpongo Inyang': [2, 4, 5, 6, 7],
+      'Dr Musa Dikko': [1, 2, 3, 5, 7],
+      'Dr Alice Balewa': [1, 2, 3, 4, 7],
+      'Dr Taylor Swift': [1, 2, 3, 4, 5],
     };
 
     for (var doctor in _doctors) {
