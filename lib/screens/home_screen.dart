@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'doctor_selection_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'Federal Medical Centre, Onitsha, Anambra': ['Dr Chukwumezie Osita', 'Dr Micah Okoye', 'Dr Abasikpongo Inyang'],
     'Mass Kenmore Hospital, Zaria, Kano': ['Dr Musa Dikko', 'Dr Alice Balewa', 'Dr Taylor Swift'],
   };
-  final List<String> _hospitals = ['Edenbrook Hospital, Victoria Island, Lagos', 'Federal Medical Centre, Umuahia, Abia', 'Mass Kenmore Hospital, Zaria, Kano'];
+  final List<String> _hospitals = ['Edenbrook Hospital, Victoria Island, Lagos', 'Federal Medical Centre, Onitsha, Anambra', 'Mass Kenmore Hospital, Zaria, Kano'];
   List<String> _filteredHospitals = [];
   bool _searchStarted = false;
   final TextEditingController _searchController = TextEditingController();
@@ -40,29 +41,43 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
-    _initSpeech();
+    _checkPermissions();
+  }
+
+   Future<void> _checkPermissions() async {
+    if (await Permission.microphone.request().isGranted) {
+      _initSpeech();
+    } else {
+      print("Microphone permission denied.");
+    }
   }
 
   void _initSpeech() async {
-    bool available = await _speech.initialize();
-    if (!available) {
-      print("Speech recognition not available.");
+    bool available = await _speech.initialize(
+      onStatus: (val) => print('onStatus: $val'),
+      onError: (val) => print('onError: $val'),
+    );
+    if (available) {
+      print("Speech recognition initialized.");
+    } else {
+      print("Speech recognition unavailable.");
     }
   }
 
   void _startListening() async {
     if (!_isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
-      );
+      bool available = await _speech.initialize();
       if (available) {
         setState(() => _isListening = true);
         _speech.listen(
           onResult: (val) => setState(() {
             _searchController.text = val.recognizedWords;
+            _filterHospitals(_searchController.text);
+            print(val.recognizedWords);
           }),
         );
+      } else {
+        print("Speech recognition not available.");
       }
     }
   }
@@ -179,7 +194,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         final visit = notifier.confirmedVisits[index];
                         return ListTile(
                           title: Text('${visit.doctorName} - ${visit.timeSlot}'),
-                          subtitle: Text('Home Visit: ${visit.homeVisit ? "Yes" : "No"}'),
+                          subtitle: Text('Hospital: ${visit.hospitalName}\nHome Visit: ${visit.homeVisit ? "Yes" : "No"}'),
+                          onTap: () => _speak('${visit.doctorName} - ${visit.timeSlot}, Hospital: ${visit.hospitalName}, Home Visit: ${visit.homeVisit ? "Yes" : "No"}'),
                         );
                       },
                     );

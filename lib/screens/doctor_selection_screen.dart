@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:intl/intl.dart';
 import 'confirmation_screen.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+
 
 class DoctorSelectionScreen extends StatefulWidget {
   final String hospitalName;
@@ -23,11 +26,33 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
   String? _selectedTimeSlot;
   bool _homeVisit = false;
 
+  FlutterTts flutterTts = FlutterTts();
+  stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+
   @override
   void initState() {
     super.initState();
     _doctors = _hospitalDoctors[widget.hospitalName]!;
     _generateDoctorTimeSlots();
+    _initTTS();
+    _initSTT();
+  }
+
+  void _initTTS() async {
+    await flutterTts.setLanguage("en-NG");
+  }
+
+  void _initSTT() async {
+    bool available = await _speech.initialize(
+      onStatus: (val) => print('onStatus: $val'),
+      onError: (val) => print('onError: $val'),
+    );
+    if (!available) {
+      print("Speech recognition not available.");
+    } else {
+      print("Speech recognition available.");
+    }
   }
 
   void _generateDoctorTimeSlots() {
@@ -133,6 +158,40 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
     }
   }
 
+  Future<void> _speak(String text) async {
+    await flutterTts.speak(text);
+  }
+
+  void _startListening() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize();
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            if (_selectedDoctor == null) {
+              _selectedDoctor = val.recognizedWords;
+              _speak('You selected $_selectedDoctor');
+            } else {
+              _selectedTimeSlot = val.recognizedWords;
+              _speak('You selected $_selectedTimeSlot');
+            }
+          }),
+        );
+      } else {
+        print("Speech recognition not available.");
+      }
+    }
+  }
+
+  void _stopListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -167,6 +226,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
                     _selectedDoctor = value;
                     _selectedTimeSlot = null;
                   });
+                  _speak('You selected $value');
                 },
                 value: _selectedDoctor,
               ),
@@ -184,6 +244,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
                     setState(() {
                       _selectedTimeSlot = value;
                     });
+                    _speak('You selected $value');
                   },
                   value: _selectedTimeSlot,
                 ),
@@ -196,6 +257,7 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
                   setState(() {
                     _homeVisit = value!;
                   });
+                  _speak('Home Visit option is ${value! ? 'selected' : 'not selected'}');
                 },
               ),
               SizedBox(height: 16),
@@ -204,12 +266,25 @@ class _DoctorSelectionScreenState extends State<DoctorSelectionScreen> {
                     ? () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => ConfirmationScreen(
+                                hospitalName: widget.hospitalName,
                                 doctorName: _selectedDoctor!,
                                 timeSlot: _selectedTimeSlot!,
                                 homeVisit: _homeVisit)));
+                        _speak('You have selected $_selectedDoctor at $_selectedTimeSlot. Home visit: ${_homeVisit ? "Yes" : "No"}');
+                              
                       }
                     : null,
                 child: Text('Submit'),
+              ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _isListening ? _stopListening : _startListening,
+                    child: Text(_isListening ? 'Stop Listening' : 'Start Listening'),
+                  ),
+                ],
               ),
             ],
           ),
